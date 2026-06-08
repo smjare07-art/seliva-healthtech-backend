@@ -183,8 +183,9 @@ exports.sendOTP = async (req, res) => {
     console.log("OTP Email Sent Successfully");
 
     res.status(200).json({
-      message: "OTP Sent Successfully",
-    });
+  message: "OTP Sent Successfully",
+  otp,
+});
   } catch (error) {
     console.log("OTP ERROR:", error);
 
