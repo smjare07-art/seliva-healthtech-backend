@@ -122,3 +122,114 @@ exports.addDoctor = async (req, res) => {
     });
   }
 };
+const nodemailer = require("nodemailer");
+
+exports.sendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.otp = otp;
+    user.otpExpire =
+      Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    const transporter =
+      nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Seliva OTP",
+      html: `<h2>Your OTP is ${otp}</h2>`,
+    });
+
+    res.json({
+      message: "OTP Sent Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (
+    !user ||
+    user.otp !== otp ||
+    user.otpExpire < Date.now()
+  ) {
+    return res.status(400).json({
+      message: "Invalid OTP",
+    });
+  }
+
+  res.json({
+    message: "OTP Verified",
+  });
+};
+const bcrypt = require("bcryptjs");
+
+exports.resetPassword = async (
+  req,
+  res
+) => {
+  const {
+    email,
+    otp,
+    newPassword,
+  } = req.body;
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (
+    !user ||
+    user.otp !== otp ||
+    user.otpExpire < Date.now()
+  ) {
+    return res.status(400).json({
+      message: "Invalid OTP",
+    });
+  }
+
+  user.password = await bcrypt.hash(
+    newPassword,
+    10
+  );
+
+  user.otp = null;
+  user.otpExpire = null;
+
+  await user.save();
+
+  res.json({
+    message:
+      "Password Updated Successfully",
+  });
+};
