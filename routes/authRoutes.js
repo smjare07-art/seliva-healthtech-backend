@@ -9,5 +9,8 @@ const {
 router.get("/create-admin", createAdmin);
 router.post("/register", register);
 router.post("/login", login);
+const { addDoctor } = require("../controllers/authController");
+
+router.post("/add-doctor", addDoctor);
 
 module.exports = router;
