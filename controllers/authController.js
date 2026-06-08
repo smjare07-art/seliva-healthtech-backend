@@ -152,21 +152,23 @@ exports.sendOTP = async (req, res) => {
 
     console.log("Generated OTP:", otp);
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
+   const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  connectionTimeout: 30000,
+});
     await transporter.verify();
 
     console.log("SMTP Connected");
 
     console.log("Sending OTP to:", email);
 
-    await transporter.sendMail({
+   /* await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Seliva HealthTech OTP",
@@ -176,7 +178,7 @@ exports.sendOTP = async (req, res) => {
         <h1>${otp}</h1>
         <p>This OTP is valid for 10 minutes.</p>
       `,
-    });
+    });*/
 
     console.log("OTP Email Sent Successfully");
 
