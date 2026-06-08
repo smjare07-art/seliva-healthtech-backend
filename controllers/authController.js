@@ -83,8 +83,7 @@ exports.createAdmin = async (req, res) => {
     res.status(500).json(error);
   }
 };
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
+
 
 exports.addDoctor = async (req, res) => {
   try {
