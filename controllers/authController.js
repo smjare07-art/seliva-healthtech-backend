@@ -124,13 +124,18 @@ exports.addDoctor = async (req, res) => {
 };
 const nodemailer = require("nodemailer");
 
+const nodemailer = require("nodemailer");
+const User = require("../models/User");
+
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    console.log("OTP Request For:", email);
     console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+
+    const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(404).json({
         message: "User not found",
@@ -142,37 +147,50 @@ console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
     ).toString();
 
     user.otp = otp;
-    user.otpExpire =
-      Date.now() + 10 * 60 * 1000;
+    user.otpExpire = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
-    const transporter =
-      nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+    console.log("Generated OTP:", otp);
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.verify();
+
+    console.log("SMTP Connected");
+
+    console.log("Sending OTP to:", email);
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Seliva OTP",
-      html: `<h2>Your OTP is ${otp}</h2>`,
+      subject: "Seliva HealthTech OTP",
+      html: `
+        <h2>Seliva HealthTech</h2>
+        <p>Your OTP for password reset is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP is valid for 10 minutes.</p>
+      `,
     });
 
-    res.json({
+    console.log("OTP Email Sent Successfully");
+
+    res.status(200).json({
       message: "OTP Sent Successfully",
     });
   } catch (error) {
-  console.log("OTP ERROR:", error);
+    console.log("OTP ERROR:", error);
 
-  res.status(500).json({
-    message: error.message,
-  });
-}
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 exports.verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
