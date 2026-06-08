@@ -5,40 +5,33 @@ const {
   createAdmin,
   register,
   login,
+  addDoctor,
   sendOTP,
   verifyOTP,
   resetPassword,
   getDoctorCount,
   getDoctors,
+  getDoctorById,
+  updateDoctor,
   deleteDoctor,
-  updateDoctor
 } = require("../controllers/authController");
+
+// Auth
 router.get("/create-admin", createAdmin);
 router.post("/register", register);
 router.post("/login", login);
-const { addDoctor } = require("../controllers/authController");
 
+// Doctor Management
 router.post("/add-doctor", addDoctor);
+router.get("/doctor-count", getDoctorCount);
+router.get("/doctors", getDoctors);
+router.get("/doctor/:id", getDoctorById);
+router.put("/doctor/:id", updateDoctor);
+router.delete("/doctor/:id", deleteDoctor);
+
+// Forgot Password
 router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 router.post("/reset-password", resetPassword);
-router.get(
-  "/doctor-count",
-  getDoctorCount
-);
 
-router.get(
-  "/doctors",
-  getDoctors
-);
-
-router.put(
-  "/doctor/:id",
-  updateDoctor
-);
-
-router.delete(
-  "/doctor/:id",
-  deleteDoctor
-);
 module.exports = router;
