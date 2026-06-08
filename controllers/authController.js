@@ -192,7 +192,7 @@ exports.verifyOTP = async (req, res) => {
     message: "OTP Verified",
   });
 };
-const bcrypt = require("bcryptjs");
+
 
 exports.resetPassword = async (
   req,
