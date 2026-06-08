@@ -233,10 +233,7 @@ exports.resetPassword = async (
       "Password Updated Successfully",
   });
 };
-exports.getDoctorCount = async (
-  req,
-  res
-) => {
+exports.getDoctorCount = async (req, res) => {
   try {
     const count = await User.countDocuments({
       role: "doctor",
