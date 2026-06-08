@@ -129,7 +129,8 @@ exports.sendOTP = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
-
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
     if (!user) {
       return res.status(404).json({
         message: "User not found",
@@ -166,10 +167,12 @@ exports.sendOTP = async (req, res) => {
       message: "OTP Sent Successfully",
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+  console.log("OTP ERROR:", error);
+
+  res.status(500).json({
+    message: error.message,
+  });
+}
 };
 exports.verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
