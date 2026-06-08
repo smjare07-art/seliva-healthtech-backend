@@ -43,6 +43,8 @@ exports.login = async (req, res) => {
       role: user.role,
       name: user.name,
       email: user.email,
+      profileCompleted: user.profileCompleted,
+      
     });
   } catch (error) {
     res.status(500).json(error);
