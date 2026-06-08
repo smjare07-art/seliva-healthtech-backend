@@ -124,7 +124,7 @@ exports.addDoctor = async (req, res) => {
 };
 const nodemailer = require("nodemailer");
 
-const nodemailer = require("nodemailer");
+
 const User = require("../models/User");
 
 exports.sendOTP = async (req, res) => {
