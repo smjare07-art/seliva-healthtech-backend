@@ -1,10 +1,13 @@
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 exports.register = async (req, res) => {
   res.json({
     message: "Register API Working",
   });
 };
 
-const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res) => {
   try {
@@ -50,8 +53,8 @@ exports.login = async (req, res) => {
     res.status(500).json(error);
   }
 };
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
+
+
 
 exports.createAdmin = async (req, res) => {
   try {
@@ -122,10 +125,6 @@ exports.addDoctor = async (req, res) => {
     });
   }
 };
-const nodemailer = require("nodemailer");
-
-
-const User = require("../models/User");
 
 exports.sendOTP = async (req, res) => {
   try {
