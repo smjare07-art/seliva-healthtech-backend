@@ -233,3 +233,73 @@ exports.resetPassword = async (
       "Password Updated Successfully",
   });
 };
+exports.getDoctorCount = async (
+  req,
+  res
+) => {
+  try {
+    const count = await User.countDocuments({
+      role: "doctor",
+    });
+
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.getDoctors = async (
+  req,
+  res
+) => {
+  try {
+    const doctors = await User.find({
+      role: "doctor",
+    }).select("-password");
+
+    res.json(doctors);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteDoctor = async (
+  req,
+  res
+) => {
+  try {
+    await User.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.json({
+      message:
+        "Doctor Deleted Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateDoctor = async (
+  req,
+  res
+) => {
+  try {
+    const doctor =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+
+    res.json(doctor);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
