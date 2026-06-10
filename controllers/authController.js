@@ -391,7 +391,8 @@ exports.completeProfile = async (
   res
 ) => {
   try {
-
+        console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
     let imageUrl = "";
 
     if (req.file) {
