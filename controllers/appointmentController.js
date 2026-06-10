@@ -112,3 +112,44 @@ async (req, res) => {
 
   }
 };
+exports.updateAvailability =
+async (req, res) => {
+
+  try {
+
+    const doctor =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          availableDays:
+            req.body.availableDays,
+
+          startTime:
+            req.body.startTime,
+
+          endTime:
+            req.body.endTime,
+
+          slotDuration:
+            req.body.slotDuration,
+        },
+        {
+          new: true,
+        }
+      );
+
+    res.json({
+      message:
+        "Availability Updated",
+      doctor,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message:
+        error.message,
+    });
+
+  }
+};

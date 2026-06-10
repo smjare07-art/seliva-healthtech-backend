@@ -19,7 +19,8 @@ const {
   getPatientById,
   getUserProfile,
   updateProfile,
-  completeDoctorProfile
+  completeDoctorProfile,
+  updateAvailability,
 } = require("../controllers/authController");
 
 // Auth
@@ -105,5 +106,9 @@ router.post(
   ]),
 
   completeDoctorProfile
+);
+router.put(
+  "/doctor-availability/:id",
+  updateAvailability
 );
 module.exports = router;

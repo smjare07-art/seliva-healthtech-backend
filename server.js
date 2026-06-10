@@ -24,6 +24,15 @@ app.use(
   "/api/appointments",
   appointmentRoutes
 );
+const availabilityRoutes =
+require(
+  "./routes/availabilityRoutes"
+);
+
+app.use(
+  "/api/availability",
+  availabilityRoutes
+);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
