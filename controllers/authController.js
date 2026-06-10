@@ -38,14 +38,15 @@ exports.login = async (req, res) => {
       }
     );
 
-    res.json({
-      token,
-      role: user.role,
-      name: user.name,
-      email: user.email,
-      profileCompleted: user.profileCompleted,
-      
-    });
+   res.json({
+  id: user._id,
+  token,
+  role: user.role,
+  name: user.name,
+  email: user.email,
+  profileCompleted:
+    user.profileCompleted,
+});
   } catch (error) {
     res.status(500).json(error);
   }
@@ -378,6 +379,29 @@ exports.register = async (req, res) => {
     res.status(201).json({
       message:
         "Patient Registered Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.completeProfile = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        ...req.body,
+        profileCompleted: true,
+      },
+      { new: true }
+    );
+
+    res.json({
+      message: "Profile Updated",
+      user,
     });
   } catch (error) {
     res.status(500).json({
