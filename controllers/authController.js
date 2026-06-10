@@ -397,18 +397,19 @@ exports.completeProfile = async (
 
     if (req.file) {
 
-      const result =
-        await cloudinary.uploader.upload(
-          req.file.path,
-          {
-            folder:
-              "seliva/profile",
-          }
-        );
+  const fileBase64 =
+    `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-      imageUrl =
-        result.secure_url;
-    }
+  const result =
+    await cloudinary.uploader.upload(
+      fileBase64,
+      {
+        folder: "seliva/profile",
+      }
+    );
+
+  imageUrl = result.secure_url;
+}
 
     const user =
       await User.findByIdAndUpdate(
