@@ -326,18 +326,116 @@ exports.updateDoctor = async (
   res
 ) => {
   try {
+
+    let profileUrl =
+      req.body.profileImage;
+
+    let licenseUrl =
+      req.body.licenseImage;
+
+    let degreeUrl =
+      req.body.degreeCertificate;
+
+    // Profile Image
+
+    if (
+      req.files?.profileImage
+    ) {
+
+      const fileBase64 =
+        `data:${req.files.profileImage[0].mimetype};base64,${req.files.profileImage[0].buffer.toString("base64")}`;
+
+      const result =
+        await cloudinary.uploader.upload(
+          fileBase64,
+          {
+            folder:
+              "seliva/profile",
+          }
+        );
+
+      profileUrl =
+        result.secure_url;
+    }
+
+    // License Image
+
+    if (
+      req.files?.licenseImage
+    ) {
+
+      const fileBase64 =
+        `data:${req.files.licenseImage[0].mimetype};base64,${req.files.licenseImage[0].buffer.toString("base64")}`;
+
+      const result =
+        await cloudinary.uploader.upload(
+          fileBase64,
+          {
+            folder:
+              "seliva/license",
+          }
+        );
+
+      licenseUrl =
+        result.secure_url;
+    }
+
+    // Degree Certificate
+
+    if (
+      req.files?.degreeCertificate
+    ) {
+
+      const fileBase64 =
+        `data:${req.files.degreeCertificate[0].mimetype};base64,${req.files.degreeCertificate[0].buffer.toString("base64")}`;
+
+      const result =
+        await cloudinary.uploader.upload(
+          fileBase64,
+          {
+            folder:
+              "seliva/degree",
+          }
+        );
+
+      degreeUrl =
+        result.secure_url;
+    }
+
     const doctor =
       await User.findByIdAndUpdate(
         req.params.id,
-        req.body,
-        { new: true }
+        {
+          ...req.body,
+
+          profileImage:
+            profileUrl,
+
+          licenseImage:
+            licenseUrl,
+
+          degreeCertificate:
+            degreeUrl,
+        },
+        {
+          new: true,
+        }
       );
 
-    res.json(doctor);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    res.json({
+      message:
+        "Doctor Updated Successfully",
+
+      doctor,
     });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message:
+        error.message,
+    });
+
   }
 };
 exports.getDoctorById = async (

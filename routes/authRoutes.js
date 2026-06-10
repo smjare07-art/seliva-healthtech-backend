@@ -32,7 +32,29 @@ router.post("/add-doctor", addDoctor);
 router.get("/doctor-count", getDoctorCount);
 router.get("/doctors", getDoctors);
 router.get("/doctor/:id", getDoctorById);
-router.put("/doctor/:id", updateDoctor);
+router.put(
+  "/doctor/:id",
+
+  upload.fields([
+    {
+      name:
+        "profileImage",
+      maxCount: 1,
+    },
+    {
+      name:
+        "licenseImage",
+      maxCount: 1,
+    },
+    {
+      name:
+        "degreeCertificate",
+      maxCount: 1,
+    },
+  ]),
+
+  updateDoctor
+);
 router.delete("/doctor/:id", deleteDoctor);
 
 // Forgot Password
