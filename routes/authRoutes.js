@@ -69,13 +69,15 @@ router.post(
 
   upload.fields([
     {
-      name:
-        "licenseImage",
+      name: "profileImage",
       maxCount: 1,
     },
     {
-      name:
-        "degreeCertificate",
+      name: "licenseImage",
+      maxCount: 1,
+    },
+    {
+      name: "degreeCertificate",
       maxCount: 1,
     },
   ]),
