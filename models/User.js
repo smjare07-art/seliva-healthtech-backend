@@ -51,6 +51,10 @@ profileCompleted: {
   type: Boolean,
   default: false,
 },
+profileImage: {
+  type: String,
+  default: "",
+},
     role: {
       type: String,
       enum: ["admin", "doctor", "patient"],

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const upload =require("../middleware/upload");
 const {
   createAdmin,
   register,
@@ -38,5 +38,11 @@ router.post("/reset-password", resetPassword);
 
 //patient 
 router.post("/register", register);
-router.post("/complete-profile", completeProfile);
+router.post(
+  "/complete-profile",
+  upload.single(
+    "profileImage"
+  ),
+  completeProfile
+);
 module.exports = router;

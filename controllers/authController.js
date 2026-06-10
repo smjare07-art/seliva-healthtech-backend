@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-
+const cloudinary =require("../config/cloudinary");
 
 exports.login = async (req, res) => {
   try {
@@ -386,26 +386,58 @@ exports.register = async (req, res) => {
     });
   }
 };
-exports.completeProfile = async (req, res) => {
+exports.completeProfile = async (
+  req,
+  res
+) => {
   try {
-    const { userId } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        ...req.body,
-        profileCompleted: true,
-      },
-      { new: true }
-    );
+    let imageUrl = "";
+
+    if (req.file) {
+
+      const result =
+        await cloudinary.uploader.upload(
+          req.file.path,
+          {
+            folder:
+              "seliva/profile",
+          }
+        );
+
+      imageUrl =
+        result.secure_url;
+    }
+
+    const user =
+      await User.findByIdAndUpdate(
+        req.body.userId,
+        {
+          ...req.body,
+
+          profileImage:
+            imageUrl,
+
+          profileCompleted:
+            true,
+        },
+        {
+          new: true,
+        }
+      );
 
     res.json({
-      message: "Profile Updated",
+      message:
+        "Profile Completed Successfully",
+
       user,
     });
+
   } catch (error) {
+
     res.status(500).json({
       message: error.message,
     });
+
   }
 };
