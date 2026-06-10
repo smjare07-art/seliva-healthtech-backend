@@ -221,6 +221,16 @@ degreeCertificate: {
   type: String,
   default: "",
 },
+availableDays: [String],
+
+startTime: String,
+
+endTime: String,
+
+slotDuration: {
+  type: Number,
+  default: 30,
+},
 
   },
   {
