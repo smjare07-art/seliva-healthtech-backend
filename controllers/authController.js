@@ -559,7 +559,8 @@ exports.updateProfile = async (
 exports.completeDoctorProfile =
   async (req, res) => {
     try {
-
+      console.log("BODY:", req.body);
+console.log("FILES:", req.files);
       let licenseUrl = "";
       let degreeUrl = "";
 
@@ -602,7 +603,21 @@ exports.completeDoctorProfile =
         degreeUrl =
           result.secure_url;
       }
+        const doctor =
+  await User.findByIdAndUpdate(
+    req.body.userId,
+    {
+      ...req.body,
+      licenseImage: licenseUrl,
+      degreeCertificate: degreeUrl,
+      profileCompleted: true,
+    },
+    {
+      new: true,
+    }
+  );
 
+console.log("DOCTOR:", doctor);
       const doctor =
         await User.findByIdAndUpdate(
           req.body.userId,
