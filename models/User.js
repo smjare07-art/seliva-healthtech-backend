@@ -60,6 +60,52 @@ profileImage: {
       enum: ["admin", "doctor", "patient"],
       default: "patient",
     },
+
+    // Doctor Profile Fields
+
+qualification: {
+  type: String,
+},
+
+specialization: {
+  type: String,
+},
+
+registrationNumber: {
+  type: String,
+},
+
+experience: {
+  type: String,
+},
+
+hospitalName: {
+  type: String,
+},
+
+designation: {
+  type: String,
+},
+
+consultationFee: {
+  type: String,
+},
+
+about: {
+  type: String,
+},
+
+languages: {
+  type: String,
+},
+
+licenseImage: {
+  type: String,
+},
+
+degreeCertificate: {
+  type: String,
+},
   },
   {
     timestamps: true,
