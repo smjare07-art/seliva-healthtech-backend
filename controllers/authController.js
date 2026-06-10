@@ -561,9 +561,28 @@ exports.completeDoctorProfile =
     try {
       console.log("BODY:", req.body);
 console.log("FILES:", req.files);
-      let licenseUrl = "";
-      let degreeUrl = "";
+     let profileUrl = "";
+let licenseUrl = "";
+let degreeUrl = "";
+        if (
+  req.files?.profileImage
+) {
 
+  const fileBase64 =
+    `data:${req.files.profileImage[0].mimetype};base64,${req.files.profileImage[0].buffer.toString("base64")}`;
+
+  const result =
+    await cloudinary.uploader.upload(
+      fileBase64,
+      {
+        folder:
+          "seliva/profile",
+      }
+    );
+
+  profileUrl =
+    result.secure_url;
+}
       if (
         req.files?.licenseImage
       ) {
@@ -609,6 +628,8 @@ console.log("FILES:", req.files);
           req.body.userId,
           {
             ...req.body,
+                  profileImage:
+        profileUrl,
 
             licenseImage:
               licenseUrl,
