@@ -564,6 +564,14 @@ console.log("FILES:", req.files);
      let profileUrl = "";
 let licenseUrl = "";
 let degreeUrl = "";
+console.log("PROFILE IMAGE:");
+console.log(req.files?.profileImage);
+
+console.log("LICENSE IMAGE:");
+console.log(req.files?.licenseImage);
+
+console.log("DEGREE IMAGE:");
+console.log(req.files?.degreeCertificate);
         if (
   req.files?.profileImage
 ) {
