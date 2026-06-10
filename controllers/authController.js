@@ -44,6 +44,7 @@ exports.login = async (req, res) => {
   role: user.role,
   name: user.name,
   email: user.email,
+  profileImage: user.profileImage,
   profileCompleted:
     user.profileCompleted,
 });
@@ -441,5 +442,22 @@ exports.completeProfile = async (
       message: error.message,
     });
 
+  }
+};
+exports.getPatientById = async (
+  req,
+  res
+) => {
+  try {
+    const user =
+      await User.findById(
+        req.params.id
+      );
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
