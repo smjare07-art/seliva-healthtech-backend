@@ -89,42 +89,60 @@ exports.createAdmin = async (req, res) => {
 
 exports.addDoctor = async (req, res) => {
   try {
-    const { name, email, mobile, password } = req.body;
-
-    const exists = await User.findOne({
-      $or: [{ email }, { mobile }],
-    });
-
-    if (exists) {
-      return res.status(400).json({
-        message: "Doctor already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      password,
-      10
-    );
-
-    const doctor = await User.create({
+    const {
       name,
       email,
       mobile,
-      password: hashedPassword,
-      role: "doctor",
-    });
+      password,
+    } = req.body;
+
+    const exists =
+      await User.findOne({
+        $or: [
+          { email },
+          { mobile },
+        ],
+      });
+
+    if (exists) {
+      return res.status(400).json({
+        message:
+          "Doctor already exists",
+      });
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        10
+      );
+
+    const doctor =
+      await User.create({
+        name,
+        email,
+        mobile,
+        password:
+          hashedPassword,
+
+        role: "doctor",
+
+        profileCompleted:
+          false,
+      });
 
     res.status(201).json({
-      message: "Doctor Added Successfully",
+      message:
+        "Doctor Added Successfully",
       doctor,
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      message:
+        error.message,
     });
   }
 };
-
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
