@@ -19,6 +19,7 @@ const {
   getPatientById,
   getUserProfile,
   updateProfile,
+  completeDoctorProfile
 } = require("../controllers/authController");
 
 // Auth
@@ -62,5 +63,23 @@ router.put(
     "profileImage"
   ),
   updateProfile
+);
+router.post(
+  "/doctor/complete-profile",
+
+  upload.fields([
+    {
+      name:
+        "licenseImage",
+      maxCount: 1,
+    },
+    {
+      name:
+        "degreeCertificate",
+      maxCount: 1,
+    },
+  ]),
+
+  completeDoctorProfile
 );
 module.exports = router;

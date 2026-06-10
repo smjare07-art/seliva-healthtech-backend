@@ -146,6 +146,82 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    
+qualification: {
+  type: String,
+  default: "",
+},
+
+specialization: {
+  type: String,
+  default: "",
+},
+
+registrationNumber: {
+  type: String,
+  default: "",
+},
+
+experience: {
+  type: String,
+  default: "",
+},
+
+hospitalName: {
+  type: String,
+  default: "",
+},
+
+designation: {
+  type: String,
+  default: "",
+},
+
+consultationFee: {
+  type: String,
+  default: "",
+},
+
+address: {
+  type: String,
+  default: "",
+},
+
+city: {
+  type: String,
+  default: "",
+},
+
+state: {
+  type: String,
+  default: "",
+},
+
+pincode: {
+  type: String,
+  default: "",
+},
+
+about: {
+  type: String,
+  default: "",
+},
+
+languages: {
+  type: String,
+  default: "",
+},
+
+licenseImage: {
+  type: String,
+  default: "",
+},
+
+degreeCertificate: {
+  type: String,
+  default: "",
+},
+
   },
   {
     timestamps: true,

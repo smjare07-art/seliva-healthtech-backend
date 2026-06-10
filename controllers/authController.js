@@ -556,3 +556,86 @@ exports.updateProfile = async (
 
   }
 };
+exports.completeDoctorProfile =
+  async (req, res) => {
+    try {
+
+      let licenseUrl = "";
+      let degreeUrl = "";
+
+      if (
+        req.files?.licenseImage
+      ) {
+
+        const fileBase64 =
+          `data:${req.files.licenseImage[0].mimetype};base64,${req.files.licenseImage[0].buffer.toString("base64")}`;
+
+        const result =
+          await cloudinary.uploader.upload(
+            fileBase64,
+            {
+              folder:
+                "seliva/license",
+            }
+          );
+
+        licenseUrl =
+          result.secure_url;
+      }
+
+      if (
+        req.files?.degreeCertificate
+      ) {
+
+        const fileBase64 =
+          `data:${req.files.degreeCertificate[0].mimetype};base64,${req.files.degreeCertificate[0].buffer.toString("base64")}`;
+
+        const result =
+          await cloudinary.uploader.upload(
+            fileBase64,
+            {
+              folder:
+                "seliva/degree",
+            }
+          );
+
+        degreeUrl =
+          result.secure_url;
+      }
+
+      const doctor =
+        await User.findByIdAndUpdate(
+          req.body.userId,
+          {
+            ...req.body,
+
+            licenseImage:
+              licenseUrl,
+
+            degreeCertificate:
+              degreeUrl,
+
+            profileCompleted:
+              true,
+          },
+          {
+            new: true,
+          }
+        );
+
+      res.json({
+        message:
+          "Doctor Profile Completed",
+
+        doctor,
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+  };
