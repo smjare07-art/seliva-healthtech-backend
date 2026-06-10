@@ -17,6 +17,7 @@ const {
   registerPatient,
   completeProfile,
   getPatientById,
+  getUserProfile,
 } = require("../controllers/authController");
 
 // Auth
@@ -49,5 +50,9 @@ router.post(
 router.get(
   "/patient/:id",
   getPatientById
+);
+router.get(
+  "/user/:id",
+  getUserProfile
 );
 module.exports = router;
