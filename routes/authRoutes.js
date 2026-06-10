@@ -18,6 +18,7 @@ const {
   completeProfile,
   getPatientById,
   getUserProfile,
+  updateProfile,
 } = require("../controllers/authController");
 
 // Auth
@@ -54,5 +55,12 @@ router.get(
 router.get(
   "/user/:id",
   getUserProfile
+);
+router.put(
+  "/user/:id",
+  upload.single(
+    "profileImage"
+  ),
+  updateProfile
 );
 module.exports = router;

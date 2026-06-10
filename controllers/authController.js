@@ -488,3 +488,53 @@ exports.getUserProfile = async (
 
   }
 };
+exports.updateProfile = async (
+  req,
+  res
+) => {
+  try {
+
+    let imageUrl =
+      req.body.profileImage;
+
+    if (req.file) {
+
+      const fileBase64 =
+        `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+      const result =
+        await cloudinary.uploader.upload(
+          fileBase64,
+          {
+            folder:
+              "seliva/profile",
+          }
+        );
+
+      imageUrl =
+        result.secure_url;
+    }
+
+    const user =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          ...req.body,
+          profileImage:
+            imageUrl,
+        },
+        {
+          new: true,
+        }
+      ).select("-password");
+
+    res.json(user);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
