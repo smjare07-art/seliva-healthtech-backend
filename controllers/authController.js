@@ -603,21 +603,7 @@ console.log("FILES:", req.files);
         degreeUrl =
           result.secure_url;
       }
-        const doctor =
-  await User.findByIdAndUpdate(
-    req.body.userId,
-    {
-      ...req.body,
-      licenseImage: licenseUrl,
-      degreeCertificate: degreeUrl,
-      profileCompleted: true,
-    },
-    {
-      new: true,
-    }
-  );
-
-console.log("DOCTOR:", doctor);
+        
       const doctor =
         await User.findByIdAndUpdate(
           req.body.userId,
