@@ -2,29 +2,75 @@ const Appointment =
 require("../models/Appointment");
 const User =
 require("../models/User");
-exports.bookAppointment =
-async (req, res) => {
+const bookAppointment =
+  async () => {
 
-  try {
+    try {
 
-    const appointment =
-      await Appointment.create(
-        req.body
+      if (
+        !selectedDay ||
+        selectedSession === null
+      ) {
+
+        Alert.alert(
+          "Select Day & Session"
+        );
+
+        return;
+      }
+
+      const user =
+        JSON.parse(
+          await AsyncStorage.getItem(
+            "user"
+          )
+        );
+
+      const session =
+        availability
+          .find(
+            d =>
+              d.day ===
+              selectedDay
+          )
+          .sessions[
+            selectedSession
+          ];
+
+      await axios.post(
+        `${API_URL}/api/appointments/book`,
+        {
+          patientId:
+            user.id,
+
+          doctorId,
+
+          appointmentDate:
+            selectedDay,
+
+          appointmentTime:
+            `${session.startTime} - ${session.endTime}`,
+        }
       );
 
-    res.status(201).json(
-      appointment
-    );
+      Alert.alert(
+        "Success",
+        "Appointment Booked Successfully"
+      );
 
-  } catch (error) {
+    } catch (error) {
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
+      console.log(
+        error.response?.data ||
+        error
+      );
 
-  }
-};
+      Alert.alert(
+        "Error",
+        "Booking Failed"
+      );
+    }
+  };
 exports.getDoctorAppointments =
 async (req, res) => {
 
@@ -178,6 +224,36 @@ async (req, res) => {
     res.status(500).json({
       message:
         error.message,
+    });
+
+  }
+};
+exports.getBookedSlots =
+async (req,res)=>{
+
+  try{
+
+    const appointments =
+      await Appointment.find({
+        doctorId:
+          req.params.doctorId,
+
+        appointmentDate:
+          req.params.date,
+
+        status:{
+          $ne:"Rejected"
+        }
+      });
+
+    res.json(
+      appointments
+    );
+
+  }catch(error){
+
+    res.status(500).json({
+      message:error.message
     });
 
   }
