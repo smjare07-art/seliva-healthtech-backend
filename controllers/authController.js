@@ -542,21 +542,19 @@ exports.getDoctorById = async (
 };
 exports.register = async (req, res) => {
 try {
-const {
-name,
-email,
-mobile,
-password,
-} = req.body;
 
+
+const {
+  name,
+  email,
+  mobile,
+  password,
+} = req.body;
 
 const userExists =
   await User.findOne({ email });
 
-if (
-  userExists &&
-  userExists.password
-) {
+if (userExists) {
   return res.status(400).json({
     message: "User already exists",
   });
@@ -566,23 +564,14 @@ const hashedPassword =
   await bcrypt.hash(password, 10);
 
 const user =
-  await User.findOneAndUpdate(
-    { email },
-    {
-      name,
-      email,
-      mobile,
-      password: hashedPassword,
-      role: "patient",
-      profileCompleted: false,
-      registerOtp: null,
-      registerOtpExpire: null,
-    },
-    {
-      new: true,
-      upsert: true,
-    }
-  );
+  await User.create({
+    name,
+    email,
+    mobile,
+    password: hashedPassword,
+    role: "patient",
+    profileCompleted: false,
+  });
 
 res.status(201).json({
   message:
@@ -592,11 +581,16 @@ res.status(201).json({
 
 
 } catch (error) {
+
+
 res.status(500).json({
-message: error.message,
+  message: error.message,
 });
+
+
 }
 };
+
 
 exports.completeProfile = async (
   req,
@@ -915,135 +909,125 @@ async (req, res) => {
   }
 };
 exports.sendRegisterOTP = async (req, res) => {
-  try {
+try {
 
-    const { email } = req.body;
 
-    let user =
-      await User.findOne({ email });
+const { email } = req.body;
 
-    if (
-      user &&
-      user.password &&
-      user.mobile &&
-      !user.mobile.startsWith("TEMP_")
-    ) {
-      return res.status(400).json({
-        message:
-          "User already registered",
-      });
-    }
+const existingUser =
+  await User.findOne({ email });
 
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+if (
+  existingUser &&
+  existingUser.password &&
+  existingUser.role === "patient" &&
+  !existingUser.mobile?.startsWith("TEMP_")
+) {
+  return res.status(400).json({
+    message: "User already registered",
+  });
+}
 
-    if (user) {
+const otp = Math.floor(
+  100000 + Math.random() * 900000
+).toString();
 
-      user.registerOtp = otp;
+if (existingUser) {
 
-      user.registerOtpExpire =
-        Date.now() +
-        10 * 60 * 1000;
+  existingUser.registerOtp = otp;
+  existingUser.registerOtpExpire =
+    Date.now() + 10 * 60 * 1000;
 
-      await user.save();
+  await existingUser.save();
 
-    } else {
+} else {
 
-      user =
-        await User.create({
-          name: "Temp User",
-          email,
-          mobile:
-            `TEMP_${Date.now()}`,
-          password: "temp",
-          registerOtp: otp,
-          registerOtpExpire:
-            Date.now() +
-            10 * 60 * 1000,
-        });
+  await User.create({
+    email,
+    mobile: `TEMP_${Date.now()}`,
+    password: "temp",
+    name: "Temp User",
+    registerOtp: otp,
+    registerOtpExpire:
+      Date.now() + 10 * 60 * 1000,
+  });
 
-    }
+}
 
-    const transporter =
-      nodemailer.createTransport({
-        host:
-          "smtp-relay.brevo.com",
-        port: 2525,
-        secure: false,
-        auth: {
-          user:
-            process.env.EMAIL_USER,
-          pass:
-            process.env.EMAIL_PASS,
-        },
-      });
+await transporter.sendMail({
+  from: '"SalivaHealth" <salivahealth@gmail.com>',
+  to: email,
+  subject: "Email Verification OTP",
+  html: `
+    <h2>SalivaHealth</h2>
+    <p>Your verification OTP:</p>
+    <h1>${otp}</h1>
+    <p>Valid for 10 minutes</p>
+  `,
+});
 
-    await transporter.sendMail({
-      from:
-        '"SalivaHealth" <salivahealth@gmail.com>',
-      to: email,
-      subject:
-        "Email Verification OTP",
-      html: `
-        <h2>SalivaHealth</h2>
-        <p>Your verification OTP:</p>
-        <h1>${otp}</h1>
-        <p>Valid for 10 minutes</p>
-      `,
-    });
+res.json({
+  message: "OTP Sent Successfully",
+});
 
-    res.json({
-      message:
-        "OTP Sent Successfully",
-    });
 
-  } catch (error) {
+} catch (error) {
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
 
-  }
-};;
-exports.verifyRegisterOTP = async (
-  req,
-  res
-) => {
-  try {
-    const { email, otp } = req.body;
+res.status(500).json({
+  message: error.message,
+});
 
-    const user =
-      await User.findOne({ email });
 
-    if (
-      !user ||
-      user.registerOtp !== otp ||
-      user.registerOtpExpire <
-        Date.now()
-    ) {
-      return res.status(400).json({
-        message: "Invalid OTP",
-      });
-    }
-
-    user.registerOtp = null;
-    user.registerOtpExpire = null;
-
-    await user.save();
-
-    res.json({
-      message:
-        "Email Verified Successfully",
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+}
 };
+
+exports.verifyRegisterOTP = async (
+req,
+res
+) => {
+try {
+
+
+const { email, otp } = req.body;
+
+const user =
+  await User.findOne({ email });
+
+if (
+  !user ||
+  user.registerOtp !== otp ||
+  user.registerOtpExpire < Date.now()
+) {
+  return res.status(400).json({
+    message: "Invalid OTP",
+  });
+}
+
+await User.deleteOne({
+  email,
+  mobile: {
+    $regex: /^TEMP_/
+  }
+});
+
+res.json({
+  message:
+    "Email Verified Successfully",
+});
+
+
+} catch (error) {
+
+
+res.status(500).json({
+  message: error.message,
+});
+
+
+}
+};
+
 exports.getPatientCount =
 async (req,res)=>{
 
