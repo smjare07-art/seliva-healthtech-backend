@@ -2,75 +2,28 @@ const Appointment =
 require("../models/Appointment");
 const User =
 require("../models/User");
-const bookAppointment =
-  async () => {
+exports.bookAppointment =
+async (req,res)=>{
 
-    try {
+  try{
 
-      if (
-        !selectedDay ||
-        selectedSession === null
-      ) {
-
-        Alert.alert(
-          "Select Day & Session"
-        );
-
-        return;
-      }
-
-      const user =
-        JSON.parse(
-          await AsyncStorage.getItem(
-            "user"
-          )
-        );
-
-      const session =
-        availability
-          .find(
-            d =>
-              d.day ===
-              selectedDay
-          )
-          .sessions[
-            selectedSession
-          ];
-
-      await axios.post(
-        `${API_URL}/api/appointments/book`,
-        {
-          patientId:
-            user.id,
-
-          doctorId,
-
-          appointmentDate:
-            selectedDay,
-
-          appointmentTime:
-            `${session.startTime} - ${session.endTime}`,
-        }
+    const appointment =
+      await Appointment.create(
+        req.body
       );
 
-      Alert.alert(
-        "Success",
-        "Appointment Booked Successfully"
-      );
+    res.status(201).json(
+      appointment
+    );
 
-    } catch (error) {
+  }catch(error){
 
-      console.log(
-        error.response?.data ||
-        error
-      );
+    res.status(500).json({
+      message:error.message
+    });
 
-      Alert.alert(
-        "Error",
-        "Booking Failed"
-      );
-    }
-  };
+  }
+};
 exports.getDoctorAppointments =
 async (req, res) => {
 
