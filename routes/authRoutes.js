@@ -115,11 +115,11 @@ router.put(
 );
 router.post(
   "/send-register-otp",
-  authController.sendRegisterOTP
+  sendRegisterOTP
 );
 
 router.post(
   "/verify-register-otp",
-  authController.verifyRegisterOTP
+  verifyRegisterOTP
 );
 module.exports = router;
