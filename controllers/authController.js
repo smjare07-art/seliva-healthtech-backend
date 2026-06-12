@@ -147,9 +147,6 @@ exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
 
-    console.log("OTP Request For:", email);
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -162,27 +159,23 @@ exports.sendOTP = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
-    user.otp = otp;
-    user.otpExpire = Date.now() + 10 * 60 * 1000;
+    await User.findByIdAndUpdate(
+      user._id,
+      {
+        otp,
+        otpExpire: Date.now() + 10 * 60 * 1000,
+      }
+    );
 
-    await user.save();
-
-    console.log("Generated OTP:", otp);
-
-  const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-    await transporter.verify();
-
-    console.log("SMTP Connected");
-
-    console.log("Sending OTP to:", email);
+    const transporter = nodemailer.createTransport({
+      host: "smtp-relay.brevo.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -196,12 +189,10 @@ exports.sendOTP = async (req, res) => {
       `,
     });
 
-    console.log("OTP Email Sent Successfully");
-
     res.status(200).json({
-  message: "OTP Sent Successfully",
-  otp,
-});
+      message: "OTP Sent Successfully",
+    });
+
   } catch (error) {
     console.log("OTP ERROR:", error);
 
