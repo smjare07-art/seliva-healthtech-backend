@@ -603,67 +603,68 @@ exports.completeProfile = async (
   res
 ) => {
   try {
-        console.log("BODY:", req.body);
+    console.log("BODY:", req.body);
     console.log("FILE:", req.file);
+
     let imageUrl = "";
 
     if (req.file) {
+      const fileBase64 =
+        `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-  const fileBase64 =
-    `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+      const result =
+        await cloudinary.uploader.upload(
+          fileBase64,
+          {
+            folder: "seliva/profile",
+          }
+        );
 
-  const result =
-    await cloudinary.uploader.upload(
-      fileBase64,
-      {
-        folder: "seliva/profile",
-      }
-    );
-
-  imageUrl = result.secure_url;
-}
+      imageUrl = result.secure_url;
+    }
 
     const user =
       await User.findByIdAndUpdate(
         req.body.userId,
         {
           ...req.body,
-
-          profileImage:
-            imageUrl,
-
-          profileCompleted:
-            true,
+          profileImage: imageUrl,
+          profileCompleted: true,
         },
         {
           new: true,
         }
       );
 
-    res.json({
+    console.log(
+      "UPDATED USER =>",
+      user
+    );
+
+    return res.status(200).json({
+      success: true,
       message:
         "Profile Completed Successfully",
-
       user,
     });
 
-  }catch (error) {
+  } catch (error) {
 
-  console.log(
-    "COMPLETE PROFILE ERROR =>",
-    error
-  );
+    console.log(
+      "COMPLETE PROFILE ERROR =>",
+      error
+    );
 
-  console.log(
-    "ERROR MESSAGE =>",
-    error.message
-  );
+    console.log(
+      "ERROR MESSAGE =>",
+      error.message
+    );
 
-  res.status(500).json({
-    message: error.message,
-  });
-
-}
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 exports.getPatientById = async (
   req,
