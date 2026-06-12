@@ -53,7 +53,15 @@ exports.login = async (req, res) => {
   }
 };
 
-
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 2525,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 exports.createAdmin = async (req, res) => {
   try {
@@ -88,61 +96,141 @@ exports.createAdmin = async (req, res) => {
 
 
 exports.addDoctor = async (req, res) => {
-  try {
-    const {
-      name,
-      email,
-      mobile,
-      password,
-    } = req.body;
+try {
+const {
+name,
+email,
+mobile,
+password,
+} = req.body;
 
-    const exists =
-      await User.findOne({
-        $or: [
-          { email },
-          { mobile },
-        ],
-      });
+```
+const exists = await User.findOne({
+  $or: [
+    { email },
+    { mobile },
+  ],
+});
 
-    if (exists) {
-      return res.status(400).json({
-        message:
-          "Doctor already exists",
-      });
-    }
+if (exists) {
+  return res.status(400).json({
+    message: "Doctor already exists",
+  });
+}
 
-    const hashedPassword =
-      await bcrypt.hash(
-        password,
-        10
-      );
+const hashedPassword =
+  await bcrypt.hash(password, 10);
 
-    const doctor =
-      await User.create({
-        name,
-        email,
-        mobile,
-        password:
-          hashedPassword,
+const doctor =
+  await User.create({
+    name,
+    email,
+    mobile,
+    password: hashedPassword,
+    role: "doctor",
+    profileCompleted: false,
+  });
 
-        role: "doctor",
+await transporter.sendMail({
+  from:
+    '"SalivaHealth" <salivahealth@gmail.com>',
+  to: email,
+  subject:
+    "Welcome to SalivaHealth",
+  html: `
+  <div style="font-family:Arial,sans-serif;background:#f4f7fb;padding:30px;">
+    <div style="max-width:650px;margin:auto;background:#fff;border-radius:15px;overflow:hidden;">
 
-        profileCompleted:
-          false,
-      });
+      <div style="background:#4F46E5;padding:25px;text-align:center;">
+        <h1 style="color:white;margin:0;">
+          SalivaHealth
+        </h1>
+      </div>
 
-    res.status(201).json({
-      message:
-        "Doctor Added Successfully",
-      doctor,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
+      <div style="padding:30px;">
+        <h2>
+          Welcome Dr. ${name}
+        </h2>
+
+        <p>
+          Your doctor account has been successfully created on
+          <strong>SalivaHealth</strong>.
+        </p>
+
+        <p>
+          Please download the SalivaHealth mobile application and login using the credentials below.
+        </p>
+
+        <div style="background:#EEF2FF;padding:15px;border-radius:10px;">
+          <p>
+            <strong>Email:</strong>
+            ${email}
+          </p>
+
+          <p>
+            <strong>Password:</strong>
+            ${password}
+          </p>
+        </div>
+
+        <h3>
+          Next Steps
+        </h3>
+
+        <ul>
+          <li>Login to the app</li>
+          <li>Complete your profile</li>
+          <li>Upload profile photo</li>
+          <li>Upload medical license</li>
+          <li>Upload degree certificate</li>
+          <li>Set your availability</li>
+        </ul>
+
+        <div style="text-align:center;margin-top:30px;">
+          <a
+            href="YOUR_PLAYSTORE_LINK"
+            style="
+              background:#4F46E5;
+              color:white;
+              text-decoration:none;
+              padding:12px 24px;
+              border-radius:8px;
+              display:inline-block;
+            "
+          >
+            Download App
+          </a>
+        </div>
+
+        <p style="margin-top:30px;">
+          Thank you for joining SalivaHealth.
+        </p>
+
+        <p>
+          Regards,<br/>
+          SalivaHealth Team
+        </p>
+      </div>
+
+    </div>
+  </div>
+  `,
+});
+
+res.status(201).json({
+  message:
+    "Doctor Added Successfully",
+  doctor,
+});
+```
+
+} catch (error) {
+res.status(500).json({
+message: error.message,
+});
+}
 };
+
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -453,47 +541,63 @@ exports.getDoctorById = async (
   }
 };
 exports.register = async (req, res) => {
-  try {
-    const {
-      name,
-      email,
-      mobile,
-      password,
-    } = req.body;
+try {
+const {
+name,
+email,
+mobile,
+password,
+} = req.body;
 
-    const userExists =
-      await User.findOne({
-        $or: [{ email }, { mobile }],
-      });
+```
+const userExists =
+  await User.findOne({ email });
 
-    if (userExists) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
+if (
+  userExists &&
+  userExists.password
+) {
+  return res.status(400).json({
+    message: "User already exists",
+  });
+}
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
+const hashedPassword =
+  await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+const user =
+  await User.findOneAndUpdate(
+    { email },
+    {
       name,
       email,
       mobile,
       password: hashedPassword,
       role: "patient",
       profileCompleted: false,
-    });
+      registerOtp: null,
+      registerOtpExpire: null,
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
 
-    res.status(201).json({
-      message:
-        "Patient Registered Successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+res.status(201).json({
+  message:
+    "Patient Registered Successfully",
+  user,
+});
+```
+
+} catch (error) {
+res.status(500).json({
+message: error.message,
+});
+}
 };
+
 exports.completeProfile = async (
   req,
   res
@@ -802,6 +906,18 @@ async (req, res) => {
 exports.sendRegisterOTP = async (req, res) => {
   try {
     const { email } = req.body;
+    const existingUser =
+  await User.findOne({ email });
+
+if (
+  existingUser &&
+  existingUser.password
+) {
+  return res.status(400).json({
+    message:
+      "User already registered",
+  });
+}
 
     const otp = Math.floor(
       100000 + Math.random() * 900000
