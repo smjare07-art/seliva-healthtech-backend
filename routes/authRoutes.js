@@ -25,6 +25,8 @@ const {
   verifyRegisterOTP,
   getPatientCount,
   getPatients,
+    deletePatient,
+
 } = require("../controllers/authController");
 
 // Auth
@@ -131,5 +133,9 @@ router.get(
 router.get(
   "/patients",
   getPatients
+);
+router.delete(
+  "/patient/:id",
+  deletePatient
 );
 module.exports = router;
