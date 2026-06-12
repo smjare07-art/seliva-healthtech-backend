@@ -905,60 +905,66 @@ async (req, res) => {
 };
 exports.sendRegisterOTP = async (req, res) => {
   try {
-    const { email } = req.body;
-    const existingUser =
-  await User.findOne({ email });
 
-if (
-  existingUser &&
-  existingUser.password
-) {
-  return res.status(400).json({
-    message:
-      "User already registered",
-  });
-}
+    const { email } = req.body;
+
+    let user =
+      await User.findOne({ email });
+
+    if (
+      user &&
+      user.password &&
+      user.mobile &&
+      !user.mobile.startsWith("TEMP_")
+    ) {
+      return res.status(400).json({
+        message:
+          "User already registered",
+      });
+    }
 
     const otp = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
 
-   const existingUser =
-  await User.findOne({
-    email,
-  });
+    if (user) {
 
-if (existingUser) {
+      user.registerOtp = otp;
 
-  existingUser.registerOtp = otp;
+      user.registerOtpExpire =
+        Date.now() +
+        10 * 60 * 1000;
 
-  existingUser.registerOtpExpire =
-    Date.now() + 10 * 60 * 1000;
+      await user.save();
 
-  await existingUser.save();
+    } else {
 
-} else {
+      user =
+        await User.create({
+          name: "Temp User",
+          email,
+          mobile:
+            `TEMP_${Date.now()}`,
+          password: "temp",
+          registerOtp: otp,
+          registerOtpExpire:
+            Date.now() +
+            10 * 60 * 1000,
+        });
 
-  await User.create({
-    name: "Temp User",
-    email,
-    mobile:
-      `TEMP_${Date.now()}`,
-    password: "temp",
-    registerOtp: otp,
-    registerOtpExpire:
-      Date.now() + 10 * 60 * 1000,
-  });
+    }
 
-}
     const transporter =
       nodemailer.createTransport({
-        host: "smtp-relay.brevo.com",
+        host:
+          "smtp-relay.brevo.com",
         port: 2525,
         secure: false,
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user:
+            process.env.EMAIL_USER,
+          pass:
+            process.env.EMAIL_PASS,
         },
       });
 
@@ -966,7 +972,8 @@ if (existingUser) {
       from:
         '"SalivaHealth" <salivahealth@gmail.com>',
       to: email,
-      subject: "Email Verification OTP",
+      subject:
+        "Email Verification OTP",
       html: `
         <h2>SalivaHealth</h2>
         <p>Your verification OTP:</p>
@@ -976,15 +983,19 @@ if (existingUser) {
     });
 
     res.json({
-      message: "OTP Sent Successfully",
+      message:
+        "OTP Sent Successfully",
     });
 
   } catch (error) {
+
     res.status(500).json({
-      message: error.message,
+      message:
+        error.message,
     });
+
   }
-};
+};;
 exports.verifyRegisterOTP = async (
   req,
   res
