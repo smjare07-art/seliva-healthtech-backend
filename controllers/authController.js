@@ -799,3 +799,95 @@ async (req, res) => {
 
   }
 };
+exports.sendRegisterOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    await User.findOneAndUpdate(
+      { email },
+      {
+        registerOtp: otp,
+        registerOtpExpire:
+          Date.now() + 10 * 60 * 1000,
+      },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
+
+    const transporter =
+      nodemailer.createTransport({
+        host: "smtp-relay.brevo.com",
+        port: 2525,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+    await transporter.sendMail({
+      from:
+        '"SalivaHealth" <salivahealth@gmail.com>',
+      to: email,
+      subject: "Email Verification OTP",
+      html: `
+        <h2>SalivaHealth</h2>
+        <p>Your verification OTP:</p>
+        <h1>${otp}</h1>
+        <p>Valid for 10 minutes</p>
+      `,
+    });
+
+    res.json({
+      message: "OTP Sent Successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.verifyRegisterOTP = async (
+  req,
+  res
+) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user =
+      await User.findOne({ email });
+
+    if (
+      !user ||
+      user.registerOtp !== otp ||
+      user.registerOtpExpire <
+        Date.now()
+    ) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    user.registerOtp = null;
+    user.registerOtpExpire = null;
+
+    await user.save();
+
+    res.json({
+      message:
+        "Email Verified Successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

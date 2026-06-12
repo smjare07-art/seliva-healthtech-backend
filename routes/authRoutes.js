@@ -21,6 +21,8 @@ const {
   updateProfile,
   completeDoctorProfile,
   updateAvailability,
+  sendRegisterOTP,
+  verifyRegisterOTP,
 } = require("../controllers/authController");
 
 // Auth
@@ -110,5 +112,14 @@ router.post(
 router.put(
   "/doctor-availability/:id",
   updateAvailability
+);
+router.post(
+  "/send-register-otp",
+  authController.sendRegisterOTP
+);
+
+router.post(
+  "/verify-register-otp",
+  authController.verifyRegisterOTP
 );
 module.exports = router;

@@ -231,7 +231,8 @@ slotDuration: {
   type: Number,
   default: 30,
 },
-
+registerOtp: String,
+registerOtpExpire: Date,
   },
   {
     timestamps: true,
