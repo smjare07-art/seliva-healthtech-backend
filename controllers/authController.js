@@ -647,7 +647,7 @@ exports.completeProfile = async (
       user,
     });
 
-  }} catch (error) {
+  }catch (error) {
 
   console.log(
     "COMPLETE PROFILE ERROR =>",
