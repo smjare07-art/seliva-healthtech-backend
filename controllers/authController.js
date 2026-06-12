@@ -647,14 +647,23 @@ exports.completeProfile = async (
       user,
     });
 
-  } catch (error) {
+  }} catch (error) {
 
-    res.status(500).json({
-      message: error.message,
-    });
+  console.log(
+    "COMPLETE PROFILE ERROR =>",
+    error
+  );
 
-  }
-};
+  console.log(
+    "ERROR MESSAGE =>",
+    error.message
+  );
+
+  res.status(500).json({
+    message: error.message,
+  });
+
+}
 exports.getPatientById = async (
   req,
   res
