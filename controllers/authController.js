@@ -179,18 +179,17 @@ const transporter = nodemailer.createTransport({
 await transporter.verify();
 console.log("SMTP Connected Successfully");
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Seliva HealthTech OTP",
-      html: `
-        <h2>Seliva HealthTech</h2>
-        <p>Your OTP for password reset is:</p>
-        <h1>${otp}</h1>
-        <p>This OTP is valid for 10 minutes.</p>
-      `,
-    });
-
+   await transporter.sendMail({
+  from: "salivahealth@gmail.com",
+  to: email,
+  subject: "Seliva HealthTech OTP",
+  html: `
+    <h2>Seliva HealthTech</h2>
+    <p>Your OTP for password reset is:</p>
+    <h1>${otp}</h1>
+    <p>This OTP is valid for 10 minutes.</p>
+  `,
+});
     res.status(200).json({
       message: "OTP Sent Successfully",
     });
