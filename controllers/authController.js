@@ -104,7 +104,7 @@ mobile,
 password,
 } = req.body;
 
-```
+
 const exists = await User.findOne({
   $or: [
     { email },
@@ -137,7 +137,7 @@ await transporter.sendMail({
   to: email,
   subject:
     "Welcome to SalivaHealth",
-  html: `
+  html:`
   <div style="font-family:Arial,sans-serif;background:#f4f7fb;padding:30px;">
     <div style="max-width:650px;margin:auto;background:#fff;border-radius:15px;overflow:hidden;">
 
@@ -222,7 +222,7 @@ res.status(201).json({
     "Doctor Added Successfully",
   doctor,
 });
-```
+
 
 } catch (error) {
 res.status(500).json({
