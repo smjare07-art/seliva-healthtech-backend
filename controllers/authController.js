@@ -1030,3 +1030,26 @@ async (req,res)=>{
  }
 
 };
+exports.getPatients =
+async (req,res)=>{
+
+  try{
+
+    const patients =
+      await User.find({
+        role:"patient"
+      });
+
+    res.json(
+      patients
+    );
+
+  }catch(error){
+
+    res.status(500).json({
+      message:error.message
+    });
+
+  }
+
+};

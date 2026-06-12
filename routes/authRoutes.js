@@ -24,6 +24,7 @@ const {
   sendRegisterOTP,
   verifyRegisterOTP,
   getPatientCount,
+  getPatients,
 } = require("../controllers/authController");
 
 // Auth
@@ -126,5 +127,9 @@ router.post(
 router.get(
  "/patient-count",
  getPatientCount
+);
+router.get(
+  "/patients",
+  getPatients
 );
 module.exports = router;
