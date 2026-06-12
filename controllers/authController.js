@@ -166,16 +166,18 @@ exports.sendOTP = async (req, res) => {
         otpExpire: Date.now() + 10 * 60 * 1000,
       }
     );
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp-relay.brevo.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 2525,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  connectionTimeout: 60000,
+});
+await transporter.verify();
+console.log("SMTP Connected Successfully");
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
