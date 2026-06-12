@@ -664,6 +664,7 @@ exports.completeProfile = async (
   });
 
 }
+};
 exports.getPatientById = async (
   req,
   res
