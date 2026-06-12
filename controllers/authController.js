@@ -549,7 +549,7 @@ mobile,
 password,
 } = req.body;
 
-```
+
 const userExists =
   await User.findOne({ email });
 
@@ -589,7 +589,7 @@ res.status(201).json({
     "Patient Registered Successfully",
   user,
 });
-```
+
 
 } catch (error) {
 res.status(500).json({
