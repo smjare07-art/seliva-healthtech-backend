@@ -1007,3 +1007,26 @@ exports.verifyRegisterOTP = async (
     });
   }
 };
+exports.getPatientCount =
+async (req,res)=>{
+
+ try{
+
+   const count =
+     await User.countDocuments({
+       role:"patient"
+     });
+
+   res.json({
+     count
+   });
+
+ }catch(error){
+
+   res.status(500).json({
+     message:error.message
+   });
+
+ }
+
+};
