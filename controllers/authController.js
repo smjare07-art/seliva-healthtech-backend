@@ -923,19 +923,34 @@ if (
       100000 + Math.random() * 900000
     ).toString();
 
-    await User.findOneAndUpdate(
-      { email },
-      {
-        registerOtp: otp,
-        registerOtpExpire:
-          Date.now() + 10 * 60 * 1000,
-      },
-      {
-        upsert: true,
-        new: true,
-      }
-    );
+   const existingUser =
+  await User.findOne({
+    email,
+  });
 
+if (existingUser) {
+
+  existingUser.registerOtp = otp;
+
+  existingUser.registerOtpExpire =
+    Date.now() + 10 * 60 * 1000;
+
+  await existingUser.save();
+
+} else {
+
+  await User.create({
+    name: "Temp User",
+    email,
+    mobile:
+      `TEMP_${Date.now()}`,
+    password: "temp",
+    registerOtp: otp,
+    registerOtpExpire:
+      Date.now() + 10 * 60 * 1000,
+  });
+
+}
     const transporter =
       nodemailer.createTransport({
         host: "smtp-relay.brevo.com",
