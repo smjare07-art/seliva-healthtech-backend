@@ -1134,11 +1134,7 @@ async (req,res)=>{
   }
 
 };
-const Prediction =
-require("../models/Prediction");
 
-const Prediction =
-require("../models/Prediction");
 
 exports.getAllPatients =
 async (req,res)=>{
