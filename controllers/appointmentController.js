@@ -20,12 +20,15 @@ async (req,res)=>{
         req.body.doctorId,
 
       title:
-        "New Appointment",
+        "New Appointment Request",
 
       message:
-        "You have a new appointment request",
+        "A patient has requested an appointment.",
 
-      appointmentId:
+      type:
+        "appointment",
+
+      referenceId:
         appointment._id,
 
     });
@@ -41,6 +44,7 @@ async (req,res)=>{
     });
 
   }
+
 };
 exports.getDoctorAppointments =
 async (req, res) => {
