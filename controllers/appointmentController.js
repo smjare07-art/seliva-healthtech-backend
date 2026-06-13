@@ -52,10 +52,11 @@ async (req, res) => {
         doctorId:
           req.params.id,
       })
-        .populate(
-          "patientId",
-          "name email mobile"
-        );
+        
+          .populate(
+  "patientId"
+)
+     
 
     res.json(
       appointments
@@ -79,13 +80,28 @@ async (req, res) => {
       await Appointment.findByIdAndUpdate(
         req.params.id,
         {
-          status:
-            "Accepted",
+          status: "Accepted",
         },
         {
           new: true,
         }
       );
+
+    await Notification.create({
+
+      userId:
+        appointment.patientId,
+
+      title:
+        "Appointment Accepted",
+
+      message:
+        "Doctor accepted your appointment",
+
+      appointmentId:
+        appointment._id,
+
+    });
 
     res.json(
       appointment
@@ -109,13 +125,28 @@ async (req, res) => {
       await Appointment.findByIdAndUpdate(
         req.params.id,
         {
-          status:
-            "Rejected",
+          status: "Rejected",
         },
         {
           new: true,
         }
       );
+
+    await Notification.create({
+
+      userId:
+        appointment.patientId,
+
+      title:
+        "Appointment Rejected",
+
+      message:
+        "Doctor rejected your appointment",
+
+      appointmentId:
+        appointment._id,
+
+    });
 
     res.json(
       appointment
