@@ -182,32 +182,37 @@ async (req, res) => {
   }
 };
 exports.getBookedSlots =
-async (req,res)=>{
+async (req, res) => {
 
-  try{
+  try {
+
+    const {
+      doctorId,
+      date,
+    } = req.params;
 
     const appointments =
       await Appointment.find({
-        doctorId:
-          req.params.doctorId,
-
+        doctorId,
         appointmentDate:
-          req.params.date,
-
-        status:{
-          $ne:"Rejected"
-        }
+          date,
       });
 
-    res.json(
-      appointments
-    );
+    const slots =
+      appointments.map(
+        (a) =>
+          a.appointmentTime
+      );
 
-  }catch(error){
+    res.json(slots);
+
+  } catch (error) {
 
     res.status(500).json({
-      message:error.message
+      message:
+        error.message,
     });
 
   }
+
 };

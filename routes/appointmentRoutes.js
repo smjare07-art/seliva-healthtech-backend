@@ -11,6 +11,7 @@ const {
   acceptAppointment,
   rejectAppointment,
   getBookedSlots,
+
 } = require(
   "../controllers/appointmentController"
 );
@@ -39,10 +40,11 @@ router.put(
   "/reject/:id",
   rejectAppointment
 );
+
+
 router.get(
-  "/doctor/:doctorId/date/:date",
+  "/booked-slots/:doctorId/:date",
   getBookedSlots
 );
-
 module.exports =
 router;
