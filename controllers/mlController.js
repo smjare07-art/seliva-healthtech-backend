@@ -151,3 +151,32 @@ async (req, res) => {
   }
 
 };
+exports.getPatientPredictions =
+async (req, res) => {
+
+  try {
+
+    const predictions =
+      await Prediction.find({
+        patientId:
+          req.params.patientId
+      }).sort({
+        createdAt: -1
+      });
+
+    res.json({
+      totalTests:
+        predictions.length,
+      predictions
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message:
+        error.message
+    });
+
+  }
+
+};

@@ -94,5 +94,6 @@ router.get(
   getPatientPredictions
 );
 
+
 module.exports =
 router;
