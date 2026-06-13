@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const cloudinary =require("../config/cloudinary");
-
+const Prediction =require("../models/Prediction");
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
