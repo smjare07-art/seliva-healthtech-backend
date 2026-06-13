@@ -28,7 +28,12 @@ const {
     deletePatient,
 
 } = require("../controllers/authController");
-
+const {
+  getNotifications,
+  markAsRead,
+} = require(
+  "../controllers/notificationController"
+);
 // Auth
 router.get("/create-admin", createAdmin);
 router.post("/register", register);
@@ -137,5 +142,15 @@ router.get(
 router.delete(
   "/patient/:id",
   deletePatient
+);
+
+router.get(
+  "/notifications/:userId",
+  getNotifications
+);
+
+router.put(
+  "/notification-read/:id",
+  markAsRead
 );
 module.exports = router;
