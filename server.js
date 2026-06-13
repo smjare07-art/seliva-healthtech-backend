@@ -40,13 +40,7 @@ app.use(
 "/api/ml",
 mlRoutes
 );
-const mlRoutes =
-require("./routes/mlRoutes");
 
-app.use(
-  "/api/ml",
-  mlRoutes
-);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
