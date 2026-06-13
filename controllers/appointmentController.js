@@ -2,6 +2,8 @@ const Appointment =
 require("../models/Appointment");
 const User =
 require("../models/User");
+const Notification =
+require("../models/Notification");
 exports.bookAppointment =
 async (req,res)=>{
 
@@ -11,6 +13,22 @@ async (req,res)=>{
       await Appointment.create(
         req.body
       );
+
+    await Notification.create({
+
+      userId:
+        req.body.doctorId,
+
+      title:
+        "New Appointment",
+
+      message:
+        "You have a new appointment request",
+
+      appointmentId:
+        appointment._id,
+
+    });
 
     res.status(201).json(
       appointment
