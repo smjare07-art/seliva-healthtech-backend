@@ -26,7 +26,7 @@ const {
   getPatientCount,
   getPatients,
     deletePatient,
-
+  getDoctorPatients,
 } = require("../controllers/authController");
 const {
   getNotifications,
@@ -152,5 +152,9 @@ router.get(
 router.put(
   "/notification-read/:id",
   markAsRead
+);
+router.get(
+  "/doctor-patients/:id",
+  getDoctorPatients
 );
 module.exports = router;

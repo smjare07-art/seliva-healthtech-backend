@@ -1097,3 +1097,40 @@ async (req,res)=>{
   }
 
 };
+exports.getDoctorPatients =
+async (req,res)=>{
+
+  try{
+
+    const appointments =
+      await Appointment.find({
+        doctorId:
+          req.params.id
+      })
+      .populate(
+        "patientId"
+      );
+
+    const uniquePatients =
+      [...new Map(
+        appointments.map(
+          item=>[
+            item.patientId._id.toString(),
+            item.patientId
+          ]
+        )
+      ).values()];
+
+    res.json(
+      uniquePatients
+    );
+
+  }catch(error){
+
+    res.status(500).json({
+      message:error.message
+    });
+
+  }
+
+};
