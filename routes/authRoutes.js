@@ -136,10 +136,7 @@ router.get(
  "/patient-count",
  getPatientCount
 );
-router.get(
-  "/patients",
-  getPatients
-);
+
 router.delete(
   "/patient/:id",
   deletePatient
