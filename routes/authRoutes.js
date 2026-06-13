@@ -27,7 +27,6 @@ const {
   getPatients,
     deletePatient,
   getDoctorPatients,
-  getAllPatients,
 } = require("../controllers/authController");
 const {
   getNotifications,
@@ -158,8 +157,5 @@ router.get(
   "/doctor-patients/:id",
   getDoctorPatients
 );
-router.get(
-"/patients",
-getAllPatients
-);
+
 module.exports = router;

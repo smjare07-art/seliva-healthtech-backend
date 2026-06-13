@@ -1137,67 +1137,7 @@ async (req,res)=>{
 const Prediction =
 require("../models/Prediction");
 
-exports.getAllPatients =
-async (req,res)=>{
-
-try{
-
-const patients =
-await User.find({
-role:"patient"
-});
-
-const data =
-await Promise.all(
-
-patients.map(
-async(patient)=>{
-
-const latestPrediction =
-await Prediction
-.findOne({
-patientId:
-patient._id
-})
-.sort({
-createdAt:-1
-});
-
-return {
-
-...patient.toObject(),
-
-healthStatus:
-latestPrediction
-?.healthStatus ||
-"Unknown",
-
-lastDisease:
-latestPrediction
-?.disease ||
-"No Data",
-
-healthScore:
-latestPrediction
-?.healthScore ||
-0,
-
-};
-
-})
-);
-
-res.json(data);
-
-}catch(error){
-
-res.status(500).json({
-message:error.message
-});
-
-}
-
-};const Prediction =
+const Prediction =
 require("../models/Prediction");
 
 exports.getAllPatients =
