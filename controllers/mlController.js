@@ -8,95 +8,146 @@ const path =
 require("path");
 
 exports.predictDisease =
-async (req,res)=>{
+async (req, res) => {
 
-try{
+  try {
 
-const {
-patientId,
-conductivity,
-oxygen,
-methane,
-ammonia
-} = req.body;
+    const {
+      patientId,
+      conductivity,
+      oxygen,
+      methane,
+      ammonia
+    } = req.body;
 
-const result =
-await PythonShell.run(
-path.join(
-__dirname,
-"../python/predict.py"
-),
-{
-args:[
-conductivity,
-oxygen,
-methane,
-ammonia
-]
-}
-);
+    const result =
+      await PythonShell.run(
+        path.join(
+          __dirname,
+          "../python/predict.py"
+        ),
+        {
+          args: [
+            conductivity,
+            oxygen,
+            methane,
+            ammonia
+          ]
+        }
+      );
 
-const disease =
-result[0];
+    const disease =
+      result[0];
 
-const prediction =
-await Prediction.create({
+    // Health Score
+    const healthScore =
+      Math.round(
+        (
+          Number(conductivity) +
+          Number(oxygen) +
+          (100 - Number(methane)) +
+          (100 - Number(ammonia))
+        ) / 4
+      );
 
-patientId,
+    // Health Status
+    let healthStatus =
+      "Good";
 
-conductivity,
-oxygen,
-methane,
-ammonia,
+    if (healthScore < 70) {
+      healthStatus =
+        "Bad";
+    }
 
-disease
+    if (healthScore < 50) {
+      healthStatus =
+        "Critical";
+    }
 
-});
+    // Disease Description
+    let description =
+      "No major health issue detected.";
 
-res.json({
+    if (
+      disease ===
+      "Respiratory Disorder"
+    ) {
+      description =
+        "Breathing related problem detected. Consult a pulmonologist.";
+    }
 
-message:
-"Prediction Success",
+    if (
+      disease ===
+      "Heart Disease"
+    ) {
+      description =
+        "Possible heart related issue detected. Consult a cardiologist.";
+    }
 
-prediction
+    const prediction =
+      await Prediction.create({
 
-});
+        patientId,
 
-}catch(error){
+        conductivity,
+        oxygen,
+        methane,
+        ammonia,
 
-res.status(500).json({
-message:error.message
-});
+        disease,
 
-}
+        healthScore,
+        healthStatus,
+        description
+
+      });
+
+    res.json({
+
+      message:
+        "Prediction Success",
+
+      prediction
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message:
+        error.message
+    });
+
+  }
 
 };
+
 exports.getPatientPredictions =
-async (req,res)=>{
+async (req, res) => {
 
-try{
+  try {
 
-const predictions =
-await Prediction.find({
+    const predictions =
+      await Prediction.find({
 
-patientId:
-req.params.patientId
+        patientId:
+          req.params.patientId
 
-})
-.sort({
-createdAt:-1
-});
+      }).sort({
+        createdAt: -1
+      });
 
-res.json(
-predictions
-);
+    res.json(
+      predictions
+    );
 
-}catch(error){
+  } catch (error) {
 
-res.status(500).json({
-message:error.message
-});
+    res.status(500).json({
+      message:
+        error.message
+    });
 
-}
+  }
 
 };

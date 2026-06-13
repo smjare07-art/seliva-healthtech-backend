@@ -16,6 +16,17 @@ new mongoose.Schema(
 
   disease:String,
 
+  healthScore: {
+  type: Number
+},
+
+healthStatus: {
+  type: String
+},
+
+description: {
+  type: String
+},
 },
 {
   timestamps:true
