@@ -1,37 +1,41 @@
 const express = require("express");
 const router = express.Router();
 
-const { PythonShell } =
-require("python-shell");
-
+const { PythonShell } = require("python-shell");
 const path = require("path");
 
 router.get(
-  "/python-test",
-  async (req,res)=>{
-
-    try{
+  "/predict-test",
+  async (req, res) => {
+    try {
 
       const result =
-await PythonShell.run(
-  path.join(
-    __dirname,
-    "../python/test.py"
-  )
-);
+        await PythonShell.run(
+          path.join(
+            __dirname,
+            "../python/predict.py"
+          ),
+          {
+            args: [
+              78,
+              22,
+              15,
+              5
+            ]
+          }
+        );
 
-res.json({
-  result
-});
+      res.json({
+        result
+      });
 
-    }catch(error){
+    } catch (error) {
 
       res.status(500).json({
-        message:error.message
+        message: error.message
       });
 
     }
-
   }
 );
 
