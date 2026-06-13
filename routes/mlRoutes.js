@@ -13,16 +13,16 @@ router.get(
     try{
 
       const result =
-      await PythonShell.run(
-        path.join(
-          __dirname,
-          "../test.py"
-        )
-      );
+await PythonShell.run(
+  path.join(
+    __dirname,
+    "../python/test.py"
+  )
+);
 
-      res.json({
-        result
-      });
+res.json({
+  result
+});
 
     }catch(error){
 
