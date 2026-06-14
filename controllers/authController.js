@@ -1197,3 +1197,41 @@ message:error.message
 }
 
 };
+const Prediction =
+require("../models/Prediction");
+
+exports.getDoctorStats =
+async (req,res)=>{
+
+try{
+
+const patientCount =
+await User.countDocuments({
+role:"patient"
+});
+
+const reportCount =
+await Prediction.countDocuments();
+
+const criticalCount =
+await Prediction.countDocuments({
+healthStatus:"Critical"
+});
+
+res.json({
+
+patientCount,
+reportCount,
+criticalCount
+
+});
+
+}catch(error){
+
+res.status(500).json({
+message:error.message
+});
+
+}
+
+};
