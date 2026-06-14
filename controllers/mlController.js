@@ -180,3 +180,32 @@ async (req, res) => {
   }
 
 };
+const Prediction =
+require("../models/Prediction");
+
+exports.getAllReports =
+async (req,res)=>{
+
+try{
+
+const reports =
+await Prediction.find()
+.populate(
+"patientId",
+"name profileImage gender city"
+)
+.sort({
+createdAt:-1
+});
+
+res.json(reports);
+
+}catch(error){
+
+res.status(500).json({
+message:error.message
+});
+
+}
+
+};

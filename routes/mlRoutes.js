@@ -10,6 +10,7 @@ require("path");
 const {
   predictDisease,
   getPatientPredictions,
+  getAllReports,
 } = require(
   "../controllers/mlController"
 );
@@ -94,6 +95,9 @@ router.get(
   getPatientPredictions
 );
 
-
+router.get(
+  "/reports",
+  getAllReports
+);
 module.exports =
 router;
