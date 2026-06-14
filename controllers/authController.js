@@ -65,32 +65,57 @@ const transporter = nodemailer.createTransport({
 
 exports.createAdmin = async (req, res) => {
   try {
-    const adminExists = await User.findOne({
-      email: "admin@seliva.com",
-    });
+
+    const adminExists =
+      await User.findOne({
+        email:
+          "salivahealth@gmail.com",
+      });
 
     if (adminExists) {
+
       return res.json({
-        message: "Admin Already Exists",
+        message:
+          "Admin Already Exists",
       });
+
     }
 
-    const hashedPassword = await bcrypt.hash(
-      "admin123",
-      10
-    );
+    const hashedPassword =
+      await bcrypt.hash(
+        "123456",
+        10
+      );
 
-    const admin = await User.create({
-      name: "Seliva Admin",
-      email: "admin@seliva.com",
-      mobile: "9999999999",
-      password: hashedPassword,
-      role: "admin",
-    });
+    const admin =
+      await User.create({
+
+        name:
+          "Seliva Admin",
+
+        email:
+          "salivahealth@gmail.com",
+
+        mobile:
+          "9403406711",
+
+        password:
+          hashedPassword,
+
+        role:
+          "admin",
+
+      });
 
     res.json(admin);
+
   } catch (error) {
-    res.status(500).json(error);
+
+    res.status(500).json({
+      message:
+        error.message,
+    });
+
   }
 };
 
