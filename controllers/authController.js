@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const cloudinary =require("../config/cloudinary");
 const Prediction =require("../models/Prediction");
+
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -1099,18 +1101,31 @@ async (req,res)=>{
   }
 
 };
-exports.deletePatient =
-async (req,res)=>{
+exports.deletePatient = async (req,res)=>{
 
   try{
 
+    const patientId =
+      req.params.id;
+
+    // Delete all predictions
+    await Prediction.deleteMany({
+      patientId
+    });
+
+    // Delete all appointments
+    await Appointment.deleteMany({
+      patientId
+    });
+
+    // Delete patient account
     await User.findByIdAndDelete(
-      req.params.id
+      patientId
     );
 
     res.json({
       message:
-      "Patient Deleted Successfully"
+      "Patient and all related data deleted successfully"
     });
 
   }catch(error){
