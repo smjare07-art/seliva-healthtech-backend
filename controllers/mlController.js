@@ -180,8 +180,7 @@ async (req, res) => {
   }
 
 };
-const Prediction =
-require("../models/Prediction");
+
 
 exports.getAllReports =
 async (req,res)=>{

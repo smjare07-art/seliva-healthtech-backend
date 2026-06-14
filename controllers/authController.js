@@ -1197,8 +1197,6 @@ message:error.message
 }
 
 };
-const Prediction =
-require("../models/Prediction");
 
 exports.getDoctorStats =
 async (req,res)=>{
@@ -1225,6 +1223,32 @@ reportCount,
 criticalCount
 
 });
+
+}catch(error){
+
+res.status(500).json({
+message:error.message
+});
+
+}
+
+};
+exports.getAllReports =
+async(req,res)=>{
+
+try{
+
+const reports =
+await Prediction.find()
+.populate(
+"patientId",
+"name profileImage"
+)
+.sort({
+createdAt:-1
+});
+
+res.json(reports);
 
 }catch(error){
 
